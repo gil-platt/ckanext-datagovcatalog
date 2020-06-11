@@ -1,32 +1,5 @@
-.. You should enable this project on travis-ci.org and coveralls.io to make
-   these badges work. The necessary Travis and Coverage config files have been
-   generated for you.
-
-.. image:: https://travis-ci.org/GSA/ckanext-datagovcatalog.svg?branch=master
-    :target: https://travis-ci.org/GSA/ckanext-datagovcatalog
-
-.. image:: https://coveralls.io/repos/GSA/ckanext-datagovcatalog/badge.svg
-  :target: https://coveralls.io/r/GSA/ckanext-datagovcatalog
-
-.. image:: https://pypip.in/download/ckanext-datagovcatalog/badge.svg
-    :target: https://pypi.python.org/pypi//ckanext-datagovcatalog/
-    :alt: Downloads
-
-.. image:: https://pypip.in/version/ckanext-datagovcatalog/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-datagovcatalog/
-    :alt: Latest Version
-
-.. image:: https://pypip.in/py_versions/ckanext-datagovcatalog/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-datagovcatalog/
-    :alt: Supported Python versions
-
-.. image:: https://pypip.in/status/ckanext-datagovcatalog/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-datagovcatalog/
-    :alt: Development Status
-
-.. image:: https://pypip.in/license/ckanext-datagovcatalog/badge.svg
-    :target: https://pypi.python.org/pypi/ckanext-datagovcatalog/
-    :alt: License
+.. image:: https://circleci.com/gh/GSA/ckanext-datagovcatalog.svg?style=svg
+    :target: https://circleci.com/gh/GSA/ckanext-datagovcatalog
 
 =============
 ckanext-datagovcatalog
