@@ -6,7 +6,6 @@ from ckan.plugins import toolkit
 
 log = logging.getLogger(__name__)
 
-# @toolkit.chained_action
 def get_extra_notification_recipients(context, data_dict=None):
     """ Harvester plugin notify about harvest jobs only to 
             admin users of the related organization.
@@ -30,11 +29,10 @@ def get_extra_notification_recipients(context, data_dict=None):
     
     # GSA saves a custom extra at organizations with the key email_list
     organization = source.get('organization')
-    # this no include organization extras
+    # this not include organization extras
     d = {'id': organization['id']}
     full_organization = toolkit.get_action('organization_show')(context, d)
     extras = full_organization.get('extras', [])
-    log.info('Org: {} Extras:{}'.format(organization['name'], extras))
     email_list_extras = [extra['value'] for extra in extras if extra['key'] == 'email_list']
     if len(email_list_extras) > 0:
         org_emails = email_list_extras[0].strip()
