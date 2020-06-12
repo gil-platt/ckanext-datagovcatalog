@@ -27,11 +27,24 @@ echo "SOLR config..."
 # Travis single-core. See https://github.com/ckan/ckan/issues/2972
 sed -i -e 's/solr_url.*/solr_url = http:\/\/127.0.0.1:8983\/solr/' ckan/test-core.ini
 
+echo "-----------------------------------------------------------------"
 echo "Initialising the database..."
 cd ckan
 paster db init -c test-core.ini
-cd -
 
+cd ..
+echo "-----------------------------------------------------------------"
+echo "Installing Harvester"
+git clone https://github.com/ckan/ckanext-harvest
+cd ckanext-harvest
+git checkout master
+
+python setup.py develop
+pip install -r pip-requirements.txt
+
+paster harvester initdb -c ../ckan/test-core.ini
+
+cd ..
 echo "Installing ckanext-datagovcatalog and its requirements..."
 python setup.py develop
 pip install -r dev-requirements.txt
