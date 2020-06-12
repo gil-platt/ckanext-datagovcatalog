@@ -14,7 +14,7 @@ def get_extra_notification_recipients(context, data_dict=None):
         Get the list of email_list extra at organization
         
         Return a list of dicts with name and email like
-            {'name': 'Jhon', 'email': 'jhon@source.com'} """
+            {'name': 'John', 'email': 'john@source.com'} """
 
     source_id = data_dict.get('source_id')
     new_recipients = []
