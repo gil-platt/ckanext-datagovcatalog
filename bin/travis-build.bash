@@ -49,6 +49,36 @@ pip install -r pip-requirements.txt
 paster harvester initdb -c ../ckan/test-core.ini
 
 cd ..
+echo "-----------------------------------------------------------------"
+echo "Installing Geodatagov"
+git clone https://github.com/GSA/ckanext-geodatagov
+cd ckanext-geodatagov
+git checkout test_collections  # TODO just testing temporary master
+
+python setup.py develop
+pip install -r pip-requirements.txt
+
+cd ..
+echo "-----------------------------------------------------------------"
+echo "Installing Spatial"
+git clone https://github.com/ckan/ckanext-spatial
+cd ckanext-spatial
+git checkout master
+
+python setup.py develop
+pip install -r pip-requirements.txt
+
+cd ..
+echo "-----------------------------------------------------------------"
+echo "Installing DataGovTheme"
+git clone https://github.com/GSA/ckanext-datagovtheme
+cd ckanext-datagovtheme
+git checkout master
+
+python setup.py develop
+
+cd ..
+echo "-----------------------------------------------------------------"
 echo "Installing ckanext-datagovcatalog and its requirements..."
 python setup.py develop
 pip install -r dev-requirements.txt
