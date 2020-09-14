@@ -3,7 +3,8 @@ import logging
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
-from ckanext.datagovcatalog.harvester.notifications import get_extra_notification_recipients
+from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
+
 
 log = logging.getLogger(__name__)
 
@@ -21,5 +22,7 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
     
     def get_actions(self):
         return {
-            'add_extra_notification_recipients': get_extra_notification_recipients
+            'harvest_get_notifications_recipients': harvest_get_notifications_recipients
             }
+    
+    

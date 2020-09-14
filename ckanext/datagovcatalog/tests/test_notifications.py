@@ -5,10 +5,10 @@
 from ckan import model
 from ckan import plugins as p
 from ckan.plugins import toolkit
-from ckanext.datagovcatalog.harvester.notifications import get_extra_notification_recipients
+from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
 from ckantoolkit.tests.helpers import reset_db
-from nose.tools import assert_equal
+from nose.tools import assert_in
 
 
 class TestExtraNotificationRecipients(object):
@@ -19,24 +19,22 @@ class TestExtraNotificationRecipients(object):
             p.load('harvest')
         if not p.plugin_loaded('datagovcatalog'):
             p.load('datagovcatalog')
-        if not p.plugin_loaded('test_nose_action_harvester'):
-            p.load('test_nose_action_harvester')
         reset_db()
 
     @classmethod
     def teardown_class(cls):
         p.unload('datagovcatalog')
         p.unload('harvest')
-        p.unload('test_nose_action_harvester')
         reset_db()
 
     def test_get_extra_email_notification(self):
         context, source_id = self._create_harvest_source_with_owner_org_and_job_if_not_existing()
 
-        new_recipients = get_extra_notification_recipients(context, {'source_id': source_id})
+        new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
+        new_recipients = new_rec_action(context, {'source_id': source_id})
 
-        assert_equal(new_recipients, [{'email': u'john@gmail.com', 'name': u'john@gmail.com'},
-                                      {'email': u'peter@gmail.com', 'name': u'peter@gmail.com'}])
+        assert_in({'email': u'john@gmail.com', 'name': u'john@gmail.com'}, new_recipients)
+        assert_in({'email': u'peter@gmail.com', 'name': u'peter@gmail.com'}, new_recipients)
 
     def _create_harvest_source_with_owner_org_and_job_if_not_existing(self):
         site_user = toolkit.get_action('get_site_user')(
@@ -53,8 +51,7 @@ class TestExtraNotificationRecipients(object):
         test_other_org = ckan_factories.Organization()
         org_admin_user = ckan_factories.User()
         org_member_user = ckan_factories.User()
-        other_org_admin_user = ckan_factories.User()
-
+        
         toolkit.get_action('organization_member_create')(
             context.copy(),
             {
@@ -73,34 +70,18 @@ class TestExtraNotificationRecipients(object):
             }
         )
 
-        toolkit.get_action('organization_member_create')(
-            context.copy(),
-            {
-                'id': test_other_org['id'],
-                'username': other_org_admin_user['name'],
-                'role': 'admin'
-            }
-        )
-
         source_dict = {
-            'title': 'Test Source',
-            'name': 'test-source',
+            'title': 'Test Source 01',
+            'name': 'test-source-01',
             'url': 'basic_test',
-            'source_type': 'test-for-action-nose',
+            'source_type': 'ckan',
             'owner_org': test_org['id'],
             'run': True
         }
 
-        try:
-            harvest_source = toolkit.get_action('harvest_source_create')(
+        harvest_source = toolkit.get_action('harvest_source_create')(
                 context.copy(),
                 source_dict
             )
-        except toolkit.ValidationError:
-            harvest_source = toolkit.get_action('harvest_source_show')(
-                context.copy(),
-                {'id': source_dict['name']}
-            )
-            pass
-
+        
         return context, harvest_source['id']

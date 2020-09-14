@@ -6,7 +6,9 @@ from ckan.plugins import toolkit
 
 log = logging.getLogger(__name__)
 
-def get_extra_notification_recipients(context, data_dict=None):
+
+@toolkit.chained_action
+def harvest_get_notifications_recipients(up_func, context, data_dict):
     """ Harvester plugin notify about harvest jobs only to 
             admin users of the related organization.
             Also allow to add custom recipients with this function.
@@ -16,8 +18,10 @@ def get_extra_notification_recipients(context, data_dict=None):
         Return a list of dicts with name and email like
             {'name': 'John', 'email': 'john@source.com'} """
 
-    source_id = data_dict.get('source_id')
     new_recipients = []
+    recipients = up_func(context, data_dict)
+
+    source_id = data_dict['source_id']
     log.info('Adding extra recipients for source {}'.format(source_id))
     context = {"model": model, 'ignore_auth': True}
 
@@ -46,4 +50,6 @@ def get_extra_notification_recipients(context, data_dict=None):
                 new_recipients.append(rec)
     
     log.info('Extra recipients for source found: {}'.format(new_recipients))
-    return new_recipients
+
+    recipients += new_recipients
+    return recipients
