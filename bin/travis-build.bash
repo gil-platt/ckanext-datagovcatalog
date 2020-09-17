@@ -5,22 +5,32 @@ echo "This is travis-build.bash..."
 
 echo "Installing the packages that CKAN requires..."
 sudo apt-get update -qq
-sudo apt-get install solr-jetty libpq-dev postgresql
+sudo apt-get install solr-jetty libcommons-fileupload-java libpq-dev postgresql postgresql-contrib python-lxml postgresql-9.3-postgis-2.1
+
+pip install --upgrade pip
+pip install setuptools -U
 
 echo "Installing CKAN and its Python dependencies..."
-git clone https://github.com/ckan/ckan
+git clone https://github.com/GSA/ckan
 cd ckan
-export latest_ckan_release_branch=`git branch --all | grep remotes/origin/release-v | sort -r | sed 's/remotes\/origin\///g' | head -n 1`
-echo "CKAN branch: $latest_ckan_release_branch"
-git checkout $latest_ckan_release_branch
+git checkout datagov-newcatalog
 python setup.py develop
-pip install -r requirements.txt --allow-all-external
-pip install -r dev-requirements.txt --allow-all-external
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
 cd -
 
 echo "Creating the PostgreSQL user and database..."
 sudo -u postgres psql -c "CREATE USER ckan_default WITH PASSWORD 'pass';"
 sudo -u postgres psql -c 'CREATE DATABASE ckan_test WITH OWNER ckan_default;'
+sudo -u postgres psql -c 'CREATE DATABASE datastore_test WITH OWNER ckan_default;'
+
+echo "Setting up PostGIS on the database..."
+sudo -u postgres psql -d ckan_test -c 'CREATE EXTENSION postgis;'
+sudo -u postgres psql -d ckan_test -c 'ALTER VIEW geometry_columns OWNER TO ckan_default;'
+sudo -u postgres psql -d ckan_test -c 'ALTER TABLE spatial_ref_sys OWNER TO ckan_default;'
+
+echo "Install other libraries required..."
+sudo apt-get install python-dev libxml2-dev libxslt1-dev libgeos-c1
 
 echo "SOLR config..."
 # Solr is multicore for tests on ckan master, but it's easier to run tests on
@@ -50,20 +60,20 @@ paster harvester initdb -c ../ckan/test-core.ini
 
 cd ..
 echo "-----------------------------------------------------------------"
-echo "Installing Geodatagov"
-git clone https://github.com/GSA/ckanext-geodatagov
-cd ckanext-geodatagov
-git checkout test_collections  # TODO just testing temporary master
-
-python setup.py develop
-pip install -r pip-requirements.txt
-
-cd ..
-echo "-----------------------------------------------------------------"
 echo "Installing Spatial"
+
 git clone https://github.com/ckan/ckanext-spatial
 cd ckanext-spatial
 git checkout master
+python setup.py develop
+pip install -r pip-requirements.txt
+paster spatial initdb -c ../ckan/test-core.ini
+
+cd ..
+echo "-----------------------------------------------------------------"
+echo "Installing Geodatagov"
+git clone https://github.com/GSA/ckanext-geodatagov
+cd ckanext-geodatagov
 
 python setup.py develop
 pip install -r pip-requirements.txt
