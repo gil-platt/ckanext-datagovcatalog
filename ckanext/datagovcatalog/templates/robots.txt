@@ -6,7 +6,7 @@ Disallow: /dataset?
 Disallow: /organization?
 Disallow: /harvest?
 Disallow: /group?
-Sitemap: https://filestore.data.gov/gsa/catalog/sitemap/sitemap.xml
+Sitemap: https://filestore.data.gov/gsa/catalog-next/sitemap/sitemap.xml
 {%- endblock %}
 
 {% block additional_user_agents -%}
