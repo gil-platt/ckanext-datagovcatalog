@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 class DatagovcatalogPlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IActions)
+    plugins.implements(plugins.ITemplateHelpers)
 
     # IConfigurer
 
@@ -25,4 +26,11 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
             'harvest_get_notifications_recipients': harvest_get_notifications_recipients
             }
     
-    
+    # ITemplateHelpers
+
+    def get_helpers(self):
+        from ckanext.datagovcatalog.helpers import sitemap
+
+        return {
+                'get_sitemap_url': sitemap.get_sitemap_url,
+                }

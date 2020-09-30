@@ -1,0 +1,13 @@
+{% ckan_extends %}
+
+{% block all_user_agents -%}
+{{ super() }}
+Disallow: /dataset?
+Disallow: /organization?
+Disallow: /harvest?
+Disallow: /group?
+Sitemap: {{ h.get_sitemap_url() }}
+{%- endblock %}
+
+{% block additional_user_agents -%}
+{%- endblock %}
