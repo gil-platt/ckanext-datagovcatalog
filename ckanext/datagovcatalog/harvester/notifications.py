@@ -29,10 +29,14 @@ def harvest_get_notifications_recipients(up_func, context, data_dict):
         source = toolkit.get_action('harvest_source_show')(context, {'id': source_id})
     except Exception, e:
         log.error('Error at add_extra_notification_recipients: {}'.format(e))
-        return []
+        return recipients
     
     # GSA saves a custom extra at organizations with the key email_list
     organization = source.get('organization')
+    if organization is None:
+        log.info('Harvest source without organization: {}'.format(source_id))
+        return recipients
+        
     # this not include organization extras
     d = {'id': organization['id']}
     full_organization = toolkit.get_action('organization_show')(context, d)
