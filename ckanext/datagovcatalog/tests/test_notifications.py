@@ -92,8 +92,7 @@ class TestExtraNotificationRecipients(object):
         new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
         new_recipients = new_rec_action(context, {'source_id': source_id})
 
-        name = config.get('ckan.site_id')
-        assert_in({'name': name, 'email': None}, new_recipients)
+        assert_in({'name': u'test.ckan.net', 'email': None}, new_recipients)
 
     def _create_harvest_source_with_no_org(self):
         site_user = toolkit.get_action('get_site_user')(
