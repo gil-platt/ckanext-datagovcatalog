@@ -85,3 +85,39 @@ class TestExtraNotificationRecipients(object):
             )
         
         return context, harvest_source['id']
+
+    def test_create_harvest_source_with_no_org(self):
+        context, source_id = self._create_harvest_source_with_no_org()
+
+        new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
+        new_recipients = new_rec_action(context, {'source_id': source_id})
+
+        assert_in({'name': u'default', 'email': None}, new_recipients)
+
+    def _create_harvest_source_with_no_org(self):
+        site_user = toolkit.get_action('get_site_user')(
+            {'model': model, 'ignore_auth': True}, {})['name']
+
+        context = {
+            'user': site_user,
+            'model': model,
+            'session': model.Session,
+            'ignore_auth': True,
+        }
+
+        source_dict = {
+            'title': 'Test Source 02',
+            'name': 'test-source-03',
+            'url': 'basic_test2',
+            'source_type': 'ckan',
+            'run': True
+        }
+
+        harvest_source = toolkit.get_action('harvest_source_create')(
+                context.copy(),
+                source_dict
+            )
+        
+        return context, harvest_source['id']
+
+    
