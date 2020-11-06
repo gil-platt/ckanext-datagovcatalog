@@ -1,10 +1,11 @@
 # encoding: utf-8
 
 """Tests for tracking information."""
-
+from datetime import datetime, timedelta
 from ckan import model
 from ckan import plugins as p
 from ckan.lib.helpers import url_for
+from ckan.lib.cli import Tracking, SearchIndexCommand
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
 from ckantoolkit.tests.helpers import reset_db, FunctionalTestBase
@@ -20,7 +21,12 @@ class TestPackageList(FunctionalTestBase):
         
     def test_tracking_info(self):
         
+        # Create packages and navigate them
         self._create_packages_and_tracking()
+        # update tracking info
+        self._update_tracking_info()
+        
+        # ensure we can see tracking info
         app = self._get_test_app()
         res = app.get('/dataset')
         assert_in(self.package['name'], res.unicode_body)
@@ -34,6 +40,21 @@ class TestPackageList(FunctionalTestBase):
         app = self._get_test_app()
         for r in range(12):
             self._post_to_tracking(url=url, app=app, ip='199.200.100.{}'.format(r))
+        
+    def _update_tracking_info(self):
+        # update tracking info
+        date = (datetime.now() -timedelta(days=1)).strftime('%Y-%m-%d')
+        Tracking('Tracking').update_all(engine=model.meta.engine, start_date=date)
+
+        #rebuild search index
+        class FakeOptions():
+            def __init__(self,**kwargs):
+                for key in kwargs:
+                    setattr(self,key,kwargs[key])
+        sic = SearchIndexCommand('search-index')
+        sic.args = []
+        sic.options = FakeOptions(only_missing=False, force=False, refresh=False, commit_each=False, quiet=False)
+        sic.rebuild()
         
     def _post_to_tracking(self, app, url, type_='page', ip='199.204.138.90',
                           browser='firefox'):
