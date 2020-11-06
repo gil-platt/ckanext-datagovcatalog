@@ -15,16 +15,10 @@ class TestExtraNotificationRecipients(object):
 
     @classmethod
     def setup_class(cls):
-        if not p.plugin_loaded('harvest'):
-            p.load('harvest')
-        if not p.plugin_loaded('datagovcatalog'):
-            p.load('datagovcatalog')
         reset_db()
 
     @classmethod
     def teardown_class(cls):
-        p.unload('datagovcatalog')
-        p.unload('harvest')
         reset_db()
 
     def test_get_extra_email_notification(self):

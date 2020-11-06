@@ -51,9 +51,9 @@ Config Settings
 
 Document any optional config settings here. For example::
 
-    # The minimum number of hours to wait before re-checking a resource
-    # (optional, default: 24).
-    ckanext.datagovcatalog.some_setting = some_default_value
+    # Add tracking info on each package for the dataset lists
+    # (optional, default: true).
+    ckanext.datagovcatalog.add_packages_tracking_info = true
 
 
 ------------------------

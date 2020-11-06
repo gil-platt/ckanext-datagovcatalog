@@ -9,10 +9,7 @@ jobs:
       - run:
           name: install
           command: bin/travis-build.bash
-      - run:
-          name: test
-          command: sh bin/travis-run.sh
-
+      
 workflows:
   version: 2
   build_and_test:

@@ -15,21 +15,7 @@ log = logging.getLogger(__name__)
 
 
 class TestCollectionSearch(object):
-
-    @classmethod
-    def setup_class(cls):
-        
-        if not p.plugin_loaded('geodatagov'):
-            p.load('geodatagov')
-        if not p.plugin_loaded('datagovcatalog'):
-            p.load('datagovcatalog')
-
-    @classmethod
-    def teardown_class(cls):
-        p.unload('datagovcatalog')
-        p.unload('geodatagov')
-        reset_db()
-        
+    
     def setup(self):
         site_user = toolkit.get_action('get_site_user')(
             {'model': model, 'ignore_auth': True}, {})['name']
