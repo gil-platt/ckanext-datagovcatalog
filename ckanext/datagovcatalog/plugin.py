@@ -40,11 +40,13 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
 
     def before_view(self, pkg_dict):
         
-        if config.get('ckanext.datagovcatalog.add_packages_tracking_info', True):
-            # add tracking information.
-            # CKAN by default hide tracking info for datasets
-            pkg_dict = toolkit.get_action("package_show")({}, {
-                'include_tracking': True,
-                'id': pkg_dict['id']
-            })
+        # Add tracking information just for datasets
+        if pkg_dict.get('type', 'dataset') == 'dataset':
+            if config.get('ckanext.datagovcatalog.add_packages_tracking_info', True):
+                # add tracking information.
+                # CKAN by default hide tracking info for datasets
+                pkg_dict = toolkit.get_action("package_show")({}, {
+                    'include_tracking': True,
+                    'id': pkg_dict['id']
+                })
         return pkg_dict
