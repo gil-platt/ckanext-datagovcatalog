@@ -4,6 +4,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
+from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package
 
 
 log = logging.getLogger(__name__)
@@ -53,12 +54,7 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
                     'include_tracking': True,
                     'id': pkg_dict['id']
                 })
-                                
-                pkg_dict['tracking_summary'] = new_pkg_dict['tracking_summary']
-                # Add tracking information for each resource
-                for resource_dict in pkg_dict.get('resources', []):
-                    for new_resource_dict in new_pkg_dict.get('resources', []):
-                        if resource_dict['url'] == new_resource_dict['url']:
-                            resource_dict['tracking_summary'] = new_resource_dict['tracking_summary']
+
+                pkg_dict = update_tracking_info_to_package(pkg_dict, new_pkg_dict)
 
         return pkg_dict
