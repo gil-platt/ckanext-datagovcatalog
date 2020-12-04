@@ -45,8 +45,20 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
             if config.get('ckanext.datagovcatalog.add_packages_tracking_info', True):
                 # add tracking information.
                 # CKAN by default hide tracking info for datasets
-                pkg_dict = toolkit.get_action("package_show")({}, {
+
+                # The pkg_dict received here could include some custom data 
+                # (like organization_type from GeoDataGov extension)
+                # just get this new data and merge witgh previous pkg_dict version
+                new_pkg_dict = toolkit.get_action("package_show")({}, {
                     'include_tracking': True,
                     'id': pkg_dict['id']
                 })
+                                
+                pkg_dict['tracking_summary'] = new_pkg_dict['tracking_summary']
+                # Add tracking information for each resource
+                for resource_dict in pkg_dict.get('resources', []):
+                    for new_resource_dict in new_pkg_dict.get('resources', []):
+                        if resource_dict['url'] == new_resource_dict['url']:
+                            resource_dict['tracking_summary'] = new_resource_dict['tracking_summary']
+
         return pkg_dict
