@@ -4,6 +4,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
+from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package
 
 
 log = logging.getLogger(__name__)
@@ -45,8 +46,15 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
             if config.get('ckanext.datagovcatalog.add_packages_tracking_info', True):
                 # add tracking information.
                 # CKAN by default hide tracking info for datasets
-                pkg_dict = toolkit.get_action("package_show")({}, {
+
+                # The pkg_dict received here could include some custom data 
+                # (like organization_type from GeoDataGov extension)
+                # just get this new data and merge witgh previous pkg_dict version
+                new_pkg_dict = toolkit.get_action("package_show")({}, {
                     'include_tracking': True,
                     'id': pkg_dict['id']
                 })
+
+                pkg_dict = update_tracking_info_to_package(pkg_dict, new_pkg_dict)
+
         return pkg_dict
