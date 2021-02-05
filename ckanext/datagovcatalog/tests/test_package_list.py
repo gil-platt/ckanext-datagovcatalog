@@ -10,6 +10,7 @@ from ckanext.datagovcatalog.harvester.notifications import harvest_get_notificat
 from ckantoolkit.tests import factories as ckan_factories
 from ckantoolkit.tests.helpers import reset_db, FunctionalTestBase
 from nose.tools import assert_in
+from ckan.tests import helpers
 
 
 class TestPackageList(FunctionalTestBase):
@@ -18,7 +19,8 @@ class TestPackageList(FunctionalTestBase):
     def setup_class(cls):
         super(TestPackageList, cls).setup_class()
         reset_db()
-        
+    
+    @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self):
         
         # Create packages and navigate them

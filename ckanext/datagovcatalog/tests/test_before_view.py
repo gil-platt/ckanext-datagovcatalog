@@ -1,4 +1,6 @@
-from nose.tools import assert_equal
+from nose.tools import assert_equal, assert_not_in
+from ckantoolkit.tests import factories
+from ckan.tests import helpers
 from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package
 
 
@@ -50,3 +52,16 @@ class TestOverridePackage():
                 asserts += 1
 
         assert_equal(asserts, 3)
+
+    @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'false')
+    def test_disable_tracking(self):
+        org = factories.Organization()
+        dataset = factories.Dataset(owner_org=org['id'])
+        context = {'ignore_auth': True}
+        dataset_show = helpers.call_action(
+            "package_show",
+            context=context,
+            id=dataset['name']
+        )
+
+        assert_not_in('tracking_summary', dataset_show)
