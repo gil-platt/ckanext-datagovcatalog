@@ -43,7 +43,7 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
         
         # Add tracking information just for datasets
         if pkg_dict.get('type', 'dataset') == 'dataset':
-            if config.get('ckanext.datagovcatalog.add_packages_tracking_info', True):
+            if toolkit.asbool(config.get('ckanext.datagovcatalog.add_packages_tracking_info', True)):
                 # add tracking information.
                 # CKAN by default hide tracking info for datasets
 
