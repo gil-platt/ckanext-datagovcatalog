@@ -69,6 +69,8 @@ class TestCollectionSearch(object):
             # just parents
             title = dataset['title']
             log.info('Check dataset {}'.format(title))
+            print(res)
+            print(title)
             assert 'Child' not in title
             extra_keys = [extra['key'] for extra in dataset['extras']]
             assert 'collection_package_id' not in extra_keys
