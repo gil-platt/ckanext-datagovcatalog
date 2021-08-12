@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 """Tests for tracking information."""
+from builtins import range
+from builtins import object
 from datetime import datetime, timedelta
 from ckan import model
 from ckan import plugins as p
@@ -48,7 +50,7 @@ class TestPackageList(object):
         Tracking('Tracking').update_all(engine=model.meta.engine, start_date=date)
 
         #rebuild search index
-        class FakeOptions():
+        class FakeOptions(object):
             def __init__(self,**kwargs):
                 for key in kwargs:
                     setattr(self,key,kwargs[key])

@@ -1,5 +1,8 @@
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 import logging
-from urlparse import urljoin
+from urllib.parse import urljoin
 from ckan import plugins
 
 from ckan.tests import helpers
@@ -8,7 +11,7 @@ from ckan.lib.base import config
 log = logging.getLogger(__name__)
 
 
-class TestRobotsTxt():
+class TestRobotsTxt(object):
 
     @classmethod
     def setup_class(cls):

@@ -1,3 +1,4 @@
+from builtins import object
 import ckan.tests.factories as factories
 from ckan.tests import helpers
 from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package

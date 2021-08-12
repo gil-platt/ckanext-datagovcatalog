@@ -2,6 +2,7 @@
 
 '''Tests for the ckanext.datagovcatalog extension.'''
 
+from builtins import object
 import ckan.plugins
 
 class TestDatagovCatalogPluginLoaded(object):

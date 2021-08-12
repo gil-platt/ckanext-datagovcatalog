@@ -2,6 +2,7 @@
 
 """Tests for notifications.py."""
 
+from builtins import object
 from ckan import model
 from ckan import plugins as p
 from ckan.plugins import toolkit

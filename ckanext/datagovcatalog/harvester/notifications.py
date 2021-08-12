@@ -27,7 +27,7 @@ def harvest_get_notifications_recipients(up_func, context, data_dict):
 
     try:
         source = toolkit.get_action('harvest_source_show')(context, {'id': source_id})
-    except Exception, e:
+    except Exception as e:
         log.error('Error at add_extra_notification_recipients: {}'.format(e))
         return recipients
     

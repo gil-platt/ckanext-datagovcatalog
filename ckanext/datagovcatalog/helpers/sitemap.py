@@ -1,4 +1,6 @@
-from urlparse import urljoin
+from future import standard_library
+standard_library.install_aliases()
+from urllib.parse import urljoin
 from ckan.lib.base import config
 
 
