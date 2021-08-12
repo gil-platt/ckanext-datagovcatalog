@@ -1,10 +1,8 @@
 import ckan.tests.factories as factories
 from ckan.tests import helpers
 from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package
-import pytest
 
 
-#@pytest.mark.usefixtures('clean_db', 'with_plugins', 'with_request_context')
 class TestOverridePackage(object):
 
     def test_override_package(self):
