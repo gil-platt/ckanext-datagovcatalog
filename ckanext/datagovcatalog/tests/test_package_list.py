@@ -13,8 +13,11 @@ from ckan.tests import helpers
 import pytest
 
 
-@pytest.mark.usefixtures(u"clean_db")
+#@pytest.mark.usefixtures(u"clean_db")
 class TestPackageList(object):
+
+    def setup(self):
+        pass
 
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self, app):
