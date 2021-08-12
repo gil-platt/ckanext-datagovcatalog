@@ -4,9 +4,8 @@ from nose.tools import assert_equal, assert_not_in
 from nose.plugins.skip import SkipTest
 from ckan import plugins
 
-if plugins.toolkit.check_ckan_version(min_version='2.8'):
-    from ckan.tests import helpers
-    from ckan.lib.base import config
+from ckan.tests import helpers
+from ckan.lib.base import config
 
 log = logging.getLogger(__name__)
 
@@ -15,8 +14,7 @@ class TestRobotsTxt():
 
     @classmethod
     def setup_class(cls):
-        if plugins.toolkit.check_ckan_version(max_version='2.3'):
-            raise SkipTest('Robots.txt is a static file in CKAN 2.3')
+        pass
 
     def test_dynamic_robots_txt(self):
         
