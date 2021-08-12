@@ -16,4 +16,4 @@ echo "Install dev.requirements"
 pip install -r dev-requirements.txt
 
 echo "TESTING ckanext-datagovtheme"
-nosetests --ckan --with-pylons=test-catalog-next.ini ckanext/datagovcatalog --debug=ckanext
+nosetests --ckan --with-pylons=test-catalog-next.ini ckanext/datagovcatalog/tests/nose --debug=ckanext
