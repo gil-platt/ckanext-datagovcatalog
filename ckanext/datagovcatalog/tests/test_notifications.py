@@ -7,25 +7,25 @@ from ckan import plugins as p
 from ckan.plugins import toolkit
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
-from ckantoolkit.tests.helpers import reset_db
+
+import pytest
 
 
+#@pytest.mark.usefixtures(u"clean_db")
 class TestExtraNotificationRecipients(object):
 
-    @classmethod
-    def setup_class(cls):
-        reset_db()
-
-    @classmethod
-    def teardown_class(cls):
-        reset_db()
+    def setup(self):
+        pass
 
     def test_get_extra_email_notification(self):
+        print("made it somehere?")
         context, source_id = self._create_harvest_source_with_owner_org_and_job_if_not_existing()
+        print("made it somehere?2")
 
         new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
         new_recipients = new_rec_action(context, {'source_id': source_id})
 
+        print("made it somehere?3")
         assert {'email': u'john@gmail.com', 'name': u'john@gmail.com'} in new_recipients
         assert {'email': u'peter@gmail.com', 'name': u'peter@gmail.com'} in new_recipients
 
@@ -39,11 +39,13 @@ class TestExtraNotificationRecipients(object):
             'session': model.Session,
             'ignore_auth': True,
         }
+        print("made it somehere??")
 
         test_org = ckan_factories.Organization(extras=[{'key': 'email_list', 'value': 'john@gmail.com, peter@gmail.com'}])
         test_other_org = ckan_factories.Organization()
         org_admin_user = ckan_factories.User()
         org_member_user = ckan_factories.User()
+        print("made it somehere???")
         
         toolkit.get_action('organization_member_create')(
             context.copy(),
@@ -112,5 +114,3 @@ class TestExtraNotificationRecipients(object):
             )
         
         return context, harvest_source['id']
-
-    
