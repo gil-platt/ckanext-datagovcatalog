@@ -2,7 +2,7 @@
 version: "3.7"
 services:
   app:
-    image: datagov/ckanext-datagovcatalog:${CKAN_VERSION}
+    image: openknowledge/ckan-dev:${CKAN_VERSION}
     build:
       context: .
       args:

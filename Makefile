@@ -1,9 +1,6 @@
 CKAN_VERSION ?= 2.8
 COMPOSE_FILE ?= docker-compose.yml
 
-build: ## Build the docker containers
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) build
-
 lint: ## Lint the code
 	@# our linting only runs with python3
 	@# TODO use CKAN_VERSION make variable once 2.8 is deprecated
