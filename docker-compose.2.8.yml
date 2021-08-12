@@ -19,6 +19,8 @@ services:
       - ckan_storage:/var/lib/ckan
       - ./config:/etc/ckan
       - .:/srv/app/src_extensions/datagovcatalog
+      - ./requirements-py2.txt:/srv/app/src_extensions/datagovcatalog/requirements.txt
+      - ./dev-requirements-py2.txt:/srv/app/src_extensions/datagovcatalog/dev-requirements.txt
       #- ./test.ini:/srv/app/test.ini
       
   db:
