@@ -58,7 +58,7 @@ do
         if [ -f $i/setup.py ];
         then
             cd $i
-            if ["${CKAN_VERSION}" == "2.8"];
+            if command -v python > /dev/null;
             then
                 python $i/setup.py develop
             else
@@ -72,7 +72,7 @@ do
         if [ -f $i/test.ini ];
         then
             echo "Updating \`test.ini\` reference to \`test-core.ini\` for plugin $i"
-            if ["${CKAN_VERSION}" == "2.8"];
+            if command -v paster > /dev/null;
             then
                 paster --plugin=ckan config-tool $i/test.ini "use = config:../../src/ckan/test-core.ini"
             else
