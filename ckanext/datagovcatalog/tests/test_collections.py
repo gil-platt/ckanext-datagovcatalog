@@ -7,7 +7,7 @@ from ckan import model
 from ckan import plugins as p
 from ckan.plugins import toolkit
 from ckan.tests import helpers
-from ckantoolkit.tests import factories as ckan_factories
+import ckan.tests.factories as factories
 from ckantoolkit.tests.helpers import reset_db
 
 log = logging.getLogger(__name__)
@@ -35,26 +35,26 @@ class TestCollectionSearch(object):
         if hasattr(self, 'org1'):
             return 
         reset_db  # TODO it's seems not working
-        self.org1 = ckan_factories.Organization()
+        self.org1 = factories.Organization()
         log.info('Org1 created {}'.format(self.org1['id']))
-        self.org2 = ckan_factories.Organization()
+        self.org2 = factories.Organization()
         log.info('Org2 created {}'.format(self.org2['id']))
-        self.group1 = ckan_factories.Group()
+        self.group1 = factories.Group()
         log.info('Group1 created {}'.format(self.group1['id']))
-        self.group2 = ckan_factories.Group()
+        self.group2 = factories.Group()
         log.info('Group2 created {}'.format(self.group2['id']))
         
-        self.parent = ckan_factories.Dataset(owner_org=self.org1['id'],
+        self.parent = factories.Dataset(owner_org=self.org1['id'],
                                              extras=[{'key': 'collection_metadata', 'value': 'true'}],
                                              title='The Father test_collections_unique',
                                              groups=[{'name': self.group1['name']}, {'name': self.group2['name']}])
         log.info('Parent created {}'.format(self.parent['id']))
-        self.child1 = ckan_factories.Dataset(owner_org=self.org1['id'],
+        self.child1 = factories.Dataset(owner_org=self.org1['id'],
                                              extras=[{'key': 'collection_package_id', 'value': self.parent['id']}],
                                              title='The Child 2 test_collections_unique',
                                              groups=[{'name': self.group1['name']}])
         log.info('Child 1 created {}'.format(self.child1['id']))
-        self.child2 = ckan_factories.Dataset(owner_org=self.org1['id'],
+        self.child2 = factories.Dataset(owner_org=self.org1['id'],
                                              extras=[{'key': 'collection_package_id', 'value': self.parent['id']}],
                                              title='The Child 2 test_collections_unique',
                                              groups=[{'name': self.group2['name']}])
