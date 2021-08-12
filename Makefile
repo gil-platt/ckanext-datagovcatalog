@@ -20,9 +20,9 @@ clean: ## Clean workspace and containers
 
 test: ## Run tests in a new container
 ifeq ($(CKAN_VERSION), 2.8)
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_2_8_FILE) exec app /srv/app/src_extensions/datagovcatalog/test.sh
+	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_2_8_FILE) run --rm app /srv/app/src_extensions/datagovcatalog/test.sh
 else
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) exec app /srv/app/src_extensions/datagovcatalog/test.sh
+	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) run --rm app /srv/app/src_extensions/datagovcatalog/test.sh
 endif
 
 up: ## Start the containers
