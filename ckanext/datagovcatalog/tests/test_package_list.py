@@ -13,7 +13,8 @@ from ckan.tests import helpers
 import pytest
 
 
-#@pytest.mark.usefixtures(u"clean_db")
+# @pytest.fixture
+@pytest.mark.usefixtures('with_request_context')
 class TestPackageList(object):
 
     def setup(self):
@@ -22,23 +23,24 @@ class TestPackageList(object):
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self, app):
         
+        self.app = app
         # Create packages and navigate them
         self._create_packages_and_tracking()
         # update tracking info
         self._update_tracking_info()
         
         # ensure we can see tracking info
-        res = app.get('/dataset')
+        res = self.app.get('/dataset')
         assert self.package['name'] in res.unicode_body
         assert 'recent views' in res.unicode_body
 
-    def _create_packages_and_tracking(self, app):
+    def _create_packages_and_tracking(self):
 
         self.package = ckan_factories.Dataset()
         # add 12 visit to the dataset page
         url = url_for(controller='package', action='read',id=self.package['name'])
         for r in range(12):
-            self._post_to_tracking(url=url, app=app, ip='199.200.100.{}'.format(r))
+            self._post_to_tracking(url=url, app=self.app, ip='199.200.100.{}'.format(r))
         
     def _update_tracking_info(self):
         # update tracking info

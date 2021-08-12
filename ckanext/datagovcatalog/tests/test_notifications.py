@@ -7,15 +7,23 @@ from ckan import plugins as p
 from ckan.plugins import toolkit
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
+from ckan.tests.helpers import reset_db
 
-import pytest
+import os
+import six
 
 
-#@pytest.mark.usefixtures(u"clean_db")
 class TestExtraNotificationRecipients(object):
 
+    @classmethod
     def setup(self):
-        pass
+        reset_db()
+        if six.PY2:
+            os.system("paster --plugin=ckanext-harvest harvester initdb  -c "
+                      "/srv/app/src_extensions/datagovcatalog/test.ini")
+        else:
+            os.system("ckan -c /srv/app/src_extensions/datagovcatalog/test.ini"
+                      " harvester initdb")
 
     def test_get_extra_email_notification(self):
         context, source_id = self._create_harvest_source_with_owner_org_and_job_if_not_existing()
@@ -82,7 +90,7 @@ class TestExtraNotificationRecipients(object):
         new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
         new_recipients = new_rec_action(context, {'source_id': source_id})
 
-        assert {'name': u'test.ckan.net', 'email': None} in new_recipients
+        assert {'name': u'default', 'email': None} in new_recipients
 
     def _create_harvest_source_with_no_org(self):
         site_user = toolkit.get_action('get_site_user')(
