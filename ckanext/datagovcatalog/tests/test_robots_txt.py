@@ -1,7 +1,5 @@
 import logging
 from urlparse import urljoin
-from nose.tools import assert_equal, assert_not_in
-from nose.plugins.skip import SkipTest
 from ckan import plugins
 
 from ckan.tests import helpers

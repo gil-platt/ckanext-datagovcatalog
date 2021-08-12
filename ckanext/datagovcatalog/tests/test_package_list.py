@@ -8,20 +8,16 @@ from ckan.lib.helpers import url_for
 from ckan.lib.cli import Tracking, SearchIndexCommand
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
-from ckantoolkit.tests.helpers import reset_db, FunctionalTestBase
-from nose.tools import assert_in
 from ckan.tests import helpers
 
+import pytest
 
-class TestPackageList(FunctionalTestBase):
 
-    @classmethod
-    def setup_class(cls):
-        super(TestPackageList, cls).setup_class()
-        reset_db()
-    
+@pytest.mark.usefixtures(u"clean_db")
+class TestPackageList(object):
+
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
-    def test_tracking_info(self):
+    def test_tracking_info(self, app):
         
         # Create packages and navigate them
         self._create_packages_and_tracking()
@@ -29,17 +25,15 @@ class TestPackageList(FunctionalTestBase):
         self._update_tracking_info()
         
         # ensure we can see tracking info
-        app = self._get_test_app()
         res = app.get('/dataset')
-        assert_in(self.package['name'], res.unicode_body)
-        assert_in('recent views', res.unicode_body)
+        assert self.package['name'] in res.unicode_body
+        assert 'recent views' in res.unicode_body
 
-    def _create_packages_and_tracking(self):
+    def _create_packages_and_tracking(self, app):
 
         self.package = ckan_factories.Dataset()
         # add 12 visit to the dataset page
         url = url_for(controller='package', action='read',id=self.package['name'])
-        app = self._get_test_app()
         for r in range(12):
             self._post_to_tracking(url=url, app=app, ip='199.200.100.{}'.format(r))
         

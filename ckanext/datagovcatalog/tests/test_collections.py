@@ -9,7 +9,6 @@ from ckan.plugins import toolkit
 from ckan.tests import helpers
 from ckantoolkit.tests import factories as ckan_factories
 from ckantoolkit.tests.helpers import reset_db
-from nose.tools import assert_equal, assert_not_in
 
 log = logging.getLogger(__name__)
 
@@ -70,9 +69,9 @@ class TestCollectionSearch(object):
             # just parents
             title = dataset['title']
             log.info('Check dataset {}'.format(title))
-            assert_not_in('Child', title)
+            assert 'Child' not in title
             extra_keys = [extra['key'] for extra in dataset['extras']]
-            assert_not_in('collection_package_id', extra_keys)
+            assert 'collection_package_id' not in extra_keys
 
         # reset DB is failing so we count other tests parent packages
         # assert_equal(res['count'], 1)
@@ -81,14 +80,14 @@ class TestCollectionSearch(object):
         log.info('Org1 test {}'.format(self.org1['id']))
         org1 = helpers.call_action("organization_show", context=self.context,
                                    id=self.org1['id'], include_dataset_count=True)
-        assert_equal(org1['package_count'], 1)
+        assert org1['package_count'] == 1
 
         grp1 = helpers.call_action("group_show", context=self.context,
                                    id=self.group1['name'],
                                    include_dataset_count=True)
-        assert_equal(grp1['package_count'], 1)
+        assert grp1['package_count'] == 1
 
         grp2 = helpers.call_action("group_show", context=self.context,
                                    id=self.group2['name'],
                                    include_dataset_count=True)
-        assert_equal(grp2['package_count'], 1)
+        assert grp2['package_count'] == 1

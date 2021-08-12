@@ -1,4 +1,3 @@
-from nose.tools import assert_equal, assert_not_in
 from ckantoolkit.tests import factories
 from ckan.tests import helpers
 from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package
@@ -36,22 +35,22 @@ class TestOverridePackage():
 
         final_pkg = update_tracking_info_to_package(pkg_dict, new_pkg_dict)
 
-        assert_equal(final_pkg['tracking_summary'], 'some tracking info')
-        assert_equal(final_pkg['organization']['organization_type'], 'Federal Government')
+        assert final_pkg['tracking_summary'] == 'some tracking info'
+        assert final_pkg['organization']['organization_type'] == 'Federal Government'
 
         asserts = 0
         for resource in final_pkg['resources']:
             if resource['url'] == 'http://resources.com/resouce1.json':
-                assert_equal(resource['tracking_summary'], 'tracking info 1')
+                assert resource['tracking_summary'] == 'tracking info 1'
                 asserts += 1
             elif resource['url'] == 'http://resources.com/resouce2.csv':
-                assert_equal(resource['tracking_summary'], 'tracking info 2')
+                assert resource['tracking_summary'] == 'tracking info 2'
                 asserts += 1
             elif resource['url'] == 'http://resources.com/resouce3.html':
-                assert_equal(resource['tracking_summary'], 'tracking info 3')
+                assert resource['tracking_summary'] == 'tracking info 3'
                 asserts += 1
 
-        assert_equal(asserts, 3)
+        assert asserts == 3
 
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'false')
     def test_disable_tracking(self):
@@ -64,4 +63,4 @@ class TestOverridePackage():
             id=dataset['name']
         )
 
-        assert_not_in('tracking_summary', dataset_show)
+        assert 'tracking_summary' not in dataset_show
