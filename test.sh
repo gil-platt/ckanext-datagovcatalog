@@ -32,5 +32,8 @@ while ! ckan_wrapper --plugin=ckan db init; do
   echo Retrying in 5 seconds...
   sleep 5
 done
+
+ckan_wrapper --plugin=ckanext-harvest harvester initdb
+
 # start_ckan_development.sh &
 pytest -s --ckan-ini=$TEST_CONFIG --cov=ckanext.datagovcatalog --disable-warnings /srv/app/src_extensions/datagovcatalog/ckanext/datagovcatalog/tests/
