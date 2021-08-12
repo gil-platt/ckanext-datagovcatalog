@@ -58,7 +58,12 @@ do
         if [ -f $i/setup.py ];
         then
             cd $i
-            python $i/setup.py develop
+            if ["${CKAN_VERSION}" == "2.8"];
+            then
+                python $i/setup.py develop
+            else
+                python3 $i/setup.py develop
+            fi
             echo "Found setup.py file in $i"
             cd $APP_DIR
         fi
@@ -67,7 +72,12 @@ do
         if [ -f $i/test.ini ];
         then
             echo "Updating \`test.ini\` reference to \`test-core.ini\` for plugin $i"
-            paster --plugin=ckan config-tool $i/test.ini "use = config:../../src/ckan/test-core.ini"
+            if ["${CKAN_VERSION}" == "2.8"];
+            then
+                paster --plugin=ckan config-tool $i/test.ini "use = config:../../src/ckan/test-core.ini"
+            else
+                ckan config-tool $i/test.ini "use = config:../../src/ckan/test-core.ini"
+            fi
         fi
     fi
 done
@@ -76,4 +86,4 @@ ckan_wrapper --plugin=ckan db init
 ckan_wrapper --plugin=ckanext-harvest harvester initdb
 
 # start_ckan_development.sh &
-pytest -s --ckan-ini=$TEST_CONFIG --cov=ckanext.datagovcatalog --disable-warnings /srv/app/src_extensions/datagovcatalog/ckanext/datagovcatalog/tests/
+pytest --ckan-ini=$TEST_CONFIG --cov=ckanext.datagovcatalog --disable-warnings /srv/app/src_extensions/datagovcatalog/ckanext/datagovcatalog/tests/
