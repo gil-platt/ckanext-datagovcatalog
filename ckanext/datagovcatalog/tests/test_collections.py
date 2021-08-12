@@ -9,10 +9,14 @@ from ckan.plugins import toolkit
 from ckan.tests import helpers
 import ckan.tests.factories as factories
 from ckantoolkit.tests.helpers import reset_db
+import os
+import pytest
+import six
 
 log = logging.getLogger(__name__)
 
 
+#@pytest.mark.usefixtures('clean_db')
 class TestCollectionSearch(object):
     
     def setup(self):
@@ -26,6 +30,13 @@ class TestCollectionSearch(object):
             'ignore_auth': True,
         }
 
+        if six.PY2:
+            os.system("paster --plugin=ckanext-harvest harvester initdb  -c "
+                      "/srv/app/src_extensions/datagovcatalog/test.ini")
+        else:
+            os.system("ckan -c /srv/app/src_extensions/datagovcatalog/test.ini"
+                      " harvester initdb")
+
         self._create_datasets()
 
     def _create_datasets(self):
@@ -34,7 +45,7 @@ class TestCollectionSearch(object):
         # create just one time
         if hasattr(self, 'org1'):
             return 
-        reset_db  # TODO it's seems not working
+        reset_db()  # TODO it's seems not working
         self.org1 = factories.Organization()
         log.info('Org1 created {}'.format(self.org1['id']))
         self.org2 = factories.Organization()
@@ -69,8 +80,8 @@ class TestCollectionSearch(object):
             # just parents
             title = dataset['title']
             log.info('Check dataset {}'.format(title))
-            print(res)
-            print(title)
+            #print(res)
+            #print(title)
             assert 'Child' not in title
             extra_keys = [extra['key'] for extra in dataset['extras']]
             assert 'collection_package_id' not in extra_keys
