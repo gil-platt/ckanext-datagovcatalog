@@ -22,12 +22,12 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
         toolkit.add_template_directory(config_, 'templates')
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('fanstatic', 'datagovcatalog')
-    
+
     def get_actions(self):
         return {
             'harvest_get_notifications_recipients': harvest_get_notifications_recipients
             }
-    
+
     # ITemplateHelpers
 
     def get_helpers(self):
@@ -36,11 +36,11 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
         return {
                 'get_sitemap_url': sitemap.get_sitemap_url,
                 }
-    
-    ## IPackageController
+
+    # # IPackageController
 
     def before_view(self, pkg_dict):
-        
+
         print(pkg_dict)
         # Add tracking information just for datasets
         if pkg_dict.get('type', 'dataset') == 'dataset':
@@ -48,7 +48,7 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
                 # add tracking information.
                 # CKAN by default hide tracking info for datasets
 
-                # The pkg_dict received here could include some custom data 
+                # The pkg_dict received here could include some custom data
                 # (like organization_type from GeoDataGov extension)
                 # just get this new data and merge witgh previous pkg_dict version
                 new_pkg_dict = toolkit.get_action("package_show")({}, {

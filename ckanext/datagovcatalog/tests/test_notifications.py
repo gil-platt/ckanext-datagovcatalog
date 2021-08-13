@@ -4,9 +4,7 @@
 
 from builtins import object
 from ckan import model
-from ckan import plugins as p
 from ckan.plugins import toolkit
-from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
 from ckan.tests.helpers import reset_db
 
@@ -47,10 +45,10 @@ class TestExtraNotificationRecipients(object):
         }
 
         test_org = ckan_factories.Organization(extras=[{'key': 'email_list', 'value': 'john@gmail.com, peter@gmail.com'}])
-        test_other_org = ckan_factories.Organization()
+        # test_other_org = ckan_factories.Organization()
         org_admin_user = ckan_factories.User()
         org_member_user = ckan_factories.User()
-        
+
         toolkit.get_action('organization_member_create')(
             context.copy(),
             {
@@ -82,7 +80,7 @@ class TestExtraNotificationRecipients(object):
                 context.copy(),
                 source_dict
             )
-        
+
         return context, harvest_source['id']
 
     def test_create_harvest_source_with_no_org(self):
@@ -116,5 +114,5 @@ class TestExtraNotificationRecipients(object):
                 context.copy(),
                 source_dict
             )
-        
+
         return context, harvest_source['id']

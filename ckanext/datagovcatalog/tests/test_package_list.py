@@ -15,14 +15,10 @@ except p.toolkit.CkanVersionException:
 else:
     from click.testing import CliRunner
     from ckan.cli import tracking, search_index
-    import ckan.logic as logic
-    import ckan.model as model
 
-from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
 from ckan.tests import helpers
 
-import os
 import pytest
 import six
 
@@ -36,13 +32,13 @@ class TestPackageList(helpers.FunctionalTestBase):
 
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self):
-        
+
         self.app = self._get_test_app()
         # Create packages and navigate them
         self._create_packages_and_tracking()
         # update tracking info
         self._update_tracking_info()
-        
+
         # ensure we can see tracking info
         if six.PY2:
             res = self.app.get('/dataset')
@@ -50,8 +46,8 @@ class TestPackageList(helpers.FunctionalTestBase):
             assert '120 recent views' in res.unicode_body
         else:
             res = self.app.get('/dataset')
-            #res = self.app.get('/dataset/%s' % (self.package['name']))
-            #res = self.app.get('/api/3/action/package_show?id=%s' % (self.package['name']))
+            # res = self.app.get('/dataset/%s' % (self.package['name']))
+            # res = self.app.get('/api/3/action/package_show?id=%s' % (self.package['name']))
             print(res.body)
             assert self.package['name'] in res.body
             assert 'recent views' in res.body
@@ -67,18 +63,18 @@ class TestPackageList(helpers.FunctionalTestBase):
             url = url_for(controller='dataset', action='read', id=self.package['name'])
         for r in range(120):
             self._post_to_tracking(url=url, app=self.app, ip='199.200.100.{}'.format(r))
-        
+
     def _update_tracking_info(self):
-        date = (datetime.now() -timedelta(days=1)).strftime('%Y-%m-%d')
+        date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
         if six.PY2:
             # update tracking info
             Tracking('Tracking').update_all(engine=model.meta.engine, start_date=date)
 
-            #rebuild search index
+            # rebuild search index
             class FakeOptions(object):
-                def __init__(self,**kwargs):
+                def __init__(self, **kwargs):
                     for key in kwargs:
-                        setattr(self,key,kwargs[key])
+                        setattr(self, key, kwargs[key])
             sic = SearchIndexCommand('search-index')
             sic.args = []
             sic.options = FakeOptions(only_missing=False, force=False, refresh=False, commit_each=False, quiet=False)
@@ -89,7 +85,7 @@ class TestPackageList(helpers.FunctionalTestBase):
             runner.invoke(search_index.rebuild, ['--only_missing', 'False', '--force', 'True',
                                                  '--refresh', 'True', 'commit_each', 'False',
                                                  '--quiet', 'False'])
-        
+
     def _post_to_tracking(self, app, url, type_='page', ip='199.204.138.90',
                           browser='firefox'):
         '''Post some data to /_tracking directly.

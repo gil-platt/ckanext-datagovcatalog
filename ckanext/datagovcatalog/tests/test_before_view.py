@@ -7,7 +7,7 @@ from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_pack
 class TestOverridePackage(object):
 
     def test_override_package(self):
-        
+
         pkg_dict = {
             'name': 'dataset1',
             'organization': {
