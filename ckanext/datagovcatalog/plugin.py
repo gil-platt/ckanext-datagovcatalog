@@ -41,6 +41,7 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
 
     def before_view(self, pkg_dict):
         
+        print(pkg_dict)
         # Add tracking information just for datasets
         if pkg_dict.get('type', 'dataset') == 'dataset':
             if toolkit.asbool(config.get('ckanext.datagovcatalog.add_packages_tracking_info', True)):
@@ -57,4 +58,5 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
 
                 pkg_dict = update_tracking_info_to_package(pkg_dict, new_pkg_dict)
 
+            print(pkg_dict)
         return pkg_dict

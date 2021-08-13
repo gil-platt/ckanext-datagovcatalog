@@ -2,6 +2,8 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 import logging
+import pytest
+import six
 from urllib.parse import urljoin
 from ckan import plugins
 
@@ -11,6 +13,8 @@ from ckan.lib.base import config
 log = logging.getLogger(__name__)
 
 
+@pytest.mark.ckan_config('ckanext.geodatagov.s3sitemap.aws_s3_url', 'https://test.gov/')
+@pytest.mark.ckan_config('ckanext.geodatagov.s3sitemap.aws_storage_path', 'test/sitemap')
 class TestRobotsTxt(object):
 
     @classmethod
@@ -26,9 +30,15 @@ class TestRobotsTxt(object):
         config['ckanext.geodatagov.s3sitemap.aws_s3_url'] = url1a
         config['ckanext.geodatagov.s3sitemap.aws_storage_path'] = url1b
         final_url = urljoin(url1a, url1b, 'sitemap.xml')
+        print(final_url)
 
         res = app.get('/robots.txt')
-        assert final_url in res
+        if six.PY2:
+            print(res.unicode_body)
+            assert final_url in res
+        else:
+            print(res.body)
+            assert final_url in res.body
         
         url1a = 'https://test2.gov/'
         url1b = 'test2/sitemap'
@@ -37,5 +47,8 @@ class TestRobotsTxt(object):
         final_url = urljoin(url1a, url1b, 'sitemap.xml')
 
         res = app.get('/robots.txt')
-        assert final_url in res
+        if six.PY2:
+            assert final_url in res
+        else:
+            assert final_url in res.body
         

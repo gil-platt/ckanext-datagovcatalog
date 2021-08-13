@@ -21,9 +21,9 @@ class TestExtraNotificationRecipients(object):
         reset_db()
         if six.PY2:
             os.system("paster --plugin=ckanext-harvest harvester initdb  -c "
-                      "/srv/app/src_extensions/datagovcatalog/test.ini")
+                      "/app/test.ini")
         else:
-            os.system("ckan -c /srv/app/src_extensions/datagovcatalog/test.ini"
+            os.system("ckan -c /app/test.ini"
                       " harvester initdb")
 
     def test_get_extra_email_notification(self):

@@ -3,11 +3,7 @@ COMPOSE_FILE ?= docker-compose.yml
 COMPOSE_2_8_FILE ?= docker-compose.2.8.yml
 
 build: ## Build the docker containers
-ifeq ($(CKAN_VERSION), 2.8)
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_2_8_FILE) build
-else
 	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) build
-endif
 
 lint: ## Lint the code
 	@# our linting only runs with python3
@@ -19,18 +15,10 @@ clean: ## Clean workspace and containers
 	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) down -v --remove-orphan
 
 test: ## Run tests in a new container
-ifeq ($(CKAN_VERSION), 2.8)
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_2_8_FILE) run --rm app /srv/app/src_extensions/datagovcatalog/test.sh
-else
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) run --rm app /srv/app/src_extensions/datagovcatalog/test.sh
-endif
+	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) run --rm app /app/test.sh
 
 up: ## Start the containers
-ifeq ($(CKAN_VERSION), 2.8)
-	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_2_8_FILE) up
-else
 	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) up
-endif
 
 
 .DEFAULT_GOAL := help

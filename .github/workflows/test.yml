@@ -60,6 +60,7 @@ jobs:
       run: |
         source $ENV_FILE
         ckan -c test.ini db init
+        ckan -c test.ini --plugin=ckanext-harvest harvester initdb
     - name: Setup extension (CKAN < 2.9)
       if: ${{ matrix.ckan-version == '2.8' }}
       run: |

@@ -2,7 +2,11 @@
 version: "3.7"
 services:
   app:
-    image: openknowledge/ckan-dev:${CKAN_VERSION}
+    image: datagov/ckanext-datagovcatalog:${CKAN_VERSION} # ensures docker-compose will rebuild the right image in case we change CKAN_VERSION
+    build:
+      context: .
+      args:
+        CKAN_VERSION: ${CKAN_VERSION}
     env_file:
       - .env
     ports:
@@ -14,7 +18,8 @@ services:
     volumes:
       - ckan_storage:/var/lib/ckan
       - ./config:/etc/ckan
-      - .:/srv/app/src_extensions/datagovcatalog
+      #- .:/srv/app/src_extensions/datagovcatalog
+      - .:/app
       #- ./test.ini:/srv/app/test.ini
       
   db:

@@ -15,11 +15,14 @@ except p.toolkit.CkanVersionException:
 else:
     from click.testing import CliRunner
     from ckan.cli import tracking, search_index
+    import ckan.logic as logic
+    import ckan.model as model
 
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckantoolkit.tests import factories as ckan_factories
 from ckan.tests import helpers
 
+import os
 import pytest
 import six
 
@@ -41,19 +44,28 @@ class TestPackageList(helpers.FunctionalTestBase):
         self._update_tracking_info()
         
         # ensure we can see tracking info
-        res = self.app.get('/dataset')
-        assert self.package['name'] in res.unicode_body
-        assert 'recent views' in res.unicode_body
+        if six.PY2:
+            res = self.app.get('/dataset')
+            assert self.package['name'] in res.unicode_body
+            assert '120 recent views' in res.unicode_body
+        else:
+            res = self.app.get('/dataset')
+            #res = self.app.get('/dataset/%s' % (self.package['name']))
+            #res = self.app.get('/api/3/action/package_show?id=%s' % (self.package['name']))
+            print(res.body)
+            assert self.package['name'] in res.body
+            assert 'recent views' in res.body
 
     def _create_packages_and_tracking(self):
 
         self.package = ckan_factories.Dataset()
+        self.sysadmin = ckan_factories.Sysadmin(name='admin')
         # add 12 visit to the dataset page
         if six.PY2:
             url = url_for(controller='package', action='read', id=self.package['name'])
         else:
             url = url_for(controller='dataset', action='read', id=self.package['name'])
-        for r in range(12):
+        for r in range(120):
             self._post_to_tracking(url=url, app=self.app, ip='199.200.100.{}'.format(r))
         
     def _update_tracking_info(self):
@@ -74,8 +86,8 @@ class TestPackageList(helpers.FunctionalTestBase):
         else:
             runner = CliRunner()
             runner.invoke(tracking.update, date)
-            runner.invoke(search_index.rebuild, ['--only_missing', 'False', '--force', 'False',
-                                                 '--refresh', 'False', 'commit_each', 'False',
+            runner.invoke(search_index.rebuild, ['--only_missing', 'False', '--force', 'True',
+                                                 '--refresh', 'True', 'commit_each', 'False',
                                                  '--quiet', 'False'])
         
     def _post_to_tracking(self, app, url, type_='page', ip='199.204.138.90',
