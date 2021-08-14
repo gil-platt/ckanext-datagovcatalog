@@ -5,7 +5,7 @@
 from builtins import object
 from ckan import model
 from ckan.plugins import toolkit
-from ckantoolkit.tests import factories as ckan_factories
+import ckan.tests.factories as factories
 from ckan.tests.helpers import reset_db
 
 import os
@@ -43,10 +43,10 @@ class TestExtraNotificationRecipients(object):
             'ignore_auth': True,
         }
 
-        test_org = ckan_factories.Organization(extras=[{'key': 'email_list', 'value': 'john@gmail.com, peter@gmail.com'}])
-        # test_other_org = ckan_factories.Organization()
-        org_admin_user = ckan_factories.User()
-        org_member_user = ckan_factories.User()
+        test_org = factories.Organization(extras=[{'key': 'email_list', 'value': 'john@gmail.com, peter@gmail.com'}])
+        # test_other_org = factories.Organization()
+        org_admin_user = factories.User()
+        org_member_user = factories.User()
 
         toolkit.get_action('organization_member_create')(
             context.copy(),

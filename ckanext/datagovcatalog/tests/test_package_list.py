@@ -16,7 +16,7 @@ else:
     from click.testing import CliRunner
     from ckan.cli import tracking, search_index
 
-from ckantoolkit.tests import factories as ckan_factories
+import ckan.tests.factories as factories
 from ckan.tests import helpers
 
 import pytest
@@ -54,8 +54,8 @@ class TestPackageList(helpers.FunctionalTestBase):
 
     def _create_packages_and_tracking(self):
 
-        self.package = ckan_factories.Dataset()
-        self.sysadmin = ckan_factories.Sysadmin(name='admin')
+        self.package = factories.Dataset()
+        self.sysadmin = factories.Sysadmin(name='admin')
         # add 12 visit to the dataset page
         if six.PY2:
             url = url_for(controller='package', action='read', id=self.package['name'])
