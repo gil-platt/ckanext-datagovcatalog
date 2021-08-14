@@ -9,6 +9,8 @@ services:
         CKAN_VERSION: ${CKAN_VERSION}
     env_file:
       - .env
+    environment:
+      CKAN__PLUGINS: envvars harvest ckan_harvester datagovcatalog
     ports:
       - "5000:5000"
     depends_on:
