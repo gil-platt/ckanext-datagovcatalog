@@ -18,4 +18,3 @@ class MixinPlugin(object):
         return {
             'get_sitemap_url': sitemap.get_sitemap_url,
         }
-

@@ -1,5 +1,4 @@
 import logging
-import six
 from ckan.lib.base import config
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
