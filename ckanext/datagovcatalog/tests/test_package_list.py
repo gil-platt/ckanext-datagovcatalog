@@ -30,8 +30,9 @@ class TestPackageList(helpers.FunctionalTestBase):
 
     @classmethod
     def setup(self):
-        runner = CliRunner()
-        runner.invoke(search_index.clear)
+        if six.PY3:
+            runner = CliRunner()
+            runner.invoke(search_index.clear)
 
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self):
