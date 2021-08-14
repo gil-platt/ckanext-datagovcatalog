@@ -17,12 +17,11 @@ class TestExtraNotificationRecipients(object):
     @classmethod
     def setup(self):
         reset_db()
+        ini_path = os.path.dirname(os.path.abspath(__file__)) + "../../../../test.ini"
         if six.PY2:
-            os.system("paster --plugin=ckanext-harvest harvester initdb  -c "
-                      "/app/test.ini")
+            os.system("paster --plugin=ckanext-harvest harvester initdb  -c %s" % ini_path)
         else:
-            os.system("ckan -c /app/test.ini"
-                      " harvester initdb")
+            os.system("ckan -c " + ini_path + " harvester initdb")
 
     def test_get_extra_email_notification(self):
         context, source_id = self._create_harvest_source_with_owner_org_and_job_if_not_existing()
