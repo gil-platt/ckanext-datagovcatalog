@@ -77,9 +77,9 @@ class TestExtraNotificationRecipients(object):
         }
 
         harvest_source = toolkit.get_action('harvest_source_create')(
-                context.copy(),
-                source_dict
-            )
+            context.copy(),
+            source_dict
+        )
 
         return context, harvest_source['id']
 
@@ -111,8 +111,8 @@ class TestExtraNotificationRecipients(object):
         }
 
         harvest_source = toolkit.get_action('harvest_source_create')(
-                context.copy(),
-                source_dict
-            )
+            context.copy(),
+            source_dict
+        )
 
         return context, harvest_source['id']

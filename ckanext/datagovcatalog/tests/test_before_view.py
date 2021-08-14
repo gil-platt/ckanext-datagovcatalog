@@ -29,7 +29,7 @@ class TestOverridePackage(object):
             'tracking_summary': 'some tracking info',
             'resources': [
                 {'url': 'http://resources.com/resouce1.json', 'tracking_summary': 'tracking info 1'},
-                {'url': 'http://resources.com/resouce2.csv',  'tracking_summary': 'tracking info 2'},
+                {'url': 'http://resources.com/resouce2.csv', 'tracking_summary': 'tracking info 2'},
                 {'url': 'http://resources.com/resouce3.html', 'tracking_summary': 'tracking info 3'}
             ]
         }
