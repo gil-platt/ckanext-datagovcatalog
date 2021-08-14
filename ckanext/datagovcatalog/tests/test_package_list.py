@@ -24,11 +24,14 @@ import six
 
 
 # @pytest.fixture
+@pytest.mark.ckan_config('ckanext.datagovcatalog.add_packages_tracking_info', True)
 @pytest.mark.usefixtures('with_request_context')
 class TestPackageList(helpers.FunctionalTestBase):
 
+    @classmethod
     def setup(self):
-        pass
+        runner = CliRunner()
+        runner.invoke(search_index.clear)
 
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self):
@@ -40,17 +43,13 @@ class TestPackageList(helpers.FunctionalTestBase):
         self._update_tracking_info()
 
         # ensure we can see tracking info
+        res = self.app.get('/dataset')
         if six.PY2:
-            res = self.app.get('/dataset')
             assert self.package['name'] in res.unicode_body
-            assert '120 recent views' in res.unicode_body
+            assert '12 recent views' in res.unicode_body
         else:
-            res = self.app.get('/dataset')
-            # res = self.app.get('/dataset/%s' % (self.package['name']))
-            # res = self.app.get('/api/3/action/package_show?id=%s' % (self.package['name']))
-            print(res.body)
             assert self.package['name'] in res.body
-            assert 'recent views' in res.body
+            assert '12 recent views' in res.body
 
     def _create_packages_and_tracking(self):
 
@@ -61,7 +60,7 @@ class TestPackageList(helpers.FunctionalTestBase):
             url = url_for(controller='package', action='read', id=self.package['name'])
         else:
             url = url_for(controller='dataset', action='read', id=self.package['name'])
-        for r in range(120):
+        for r in range(12):
             self._post_to_tracking(url=url, app=self.app, ip='199.200.100.{}'.format(r))
 
     def _update_tracking_info(self):
@@ -82,8 +81,8 @@ class TestPackageList(helpers.FunctionalTestBase):
         else:
             runner = CliRunner()
             runner.invoke(tracking.update, date)
-            runner.invoke(search_index.rebuild, ['--only_missing', 'False', '--force', 'True',
-                                                 '--refresh', 'True', 'commit_each', 'False',
+            runner.invoke(search_index.rebuild, ['--only_missing', 'False', '--force', 'False',
+                                                 '--refresh', 'False', 'commit_each', 'False',
                                                  '--quiet', 'False'])
 
     def _post_to_tracking(self, app, url, type_='page', ip='199.204.138.90',
