@@ -30,7 +30,6 @@ class TestRobotsTxt(object):
         config['ckanext.geodatagov.s3sitemap.aws_s3_url'] = url1a
         config['ckanext.geodatagov.s3sitemap.aws_storage_path'] = url1b
         final_url = urljoin(url1a, url1b, 'sitemap.xml')
-        print(final_url)
 
         res = app.get('/robots.txt')
         if six.PY2:
