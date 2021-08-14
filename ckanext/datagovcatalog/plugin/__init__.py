@@ -1,4 +1,5 @@
 import logging
+import six
 from ckan.lib.base import config
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
@@ -6,35 +7,25 @@ import ckan.plugins.toolkit as toolkit
 from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
 from ckanext.datagovcatalog.helpers.packages import update_tracking_info_to_package
 
+try:
+    toolkit.requires_ckan_version("2.9")
+except toolkit.CkanVersionException:
+    from ckanext.datagovcatalog.plugin.pylons_plugin import MixinPlugin
+else:
+    from ckanext.datagovcatalog.plugin.flask_plugin import MixinPlugin
 
 log = logging.getLogger(__name__)
 
 
-class DatagovcatalogPlugin(plugins.SingletonPlugin):
+class DatagovcatalogPlugin(MixinPlugin, plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IActions)
-    plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IPackageController, inherit=True)
-
-    # IConfigurer
-
-    def update_config(self, config_):
-        toolkit.add_template_directory(config_, 'templates')
-        toolkit.add_public_directory(config_, 'public')
-        toolkit.add_resource('fanstatic', 'datagovcatalog')
+    plugins.implements(plugins.ITemplateHelpers)
 
     def get_actions(self):
         return {
             'harvest_get_notifications_recipients': harvest_get_notifications_recipients
-        }
-
-    # ITemplateHelpers
-
-    def get_helpers(self):
-        from ckanext.datagovcatalog.helpers import sitemap
-
-        return {
-            'get_sitemap_url': sitemap.get_sitemap_url,
         }
 
     # IPackageController

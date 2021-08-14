@@ -28,8 +28,13 @@ function ckan_wrapper () {
 }
 
 
-ckan_wrapper --plugin=ckan db init
+# Database is listening, but still unavailable. Just keep trying...
+while ! ckan_wrapper --plugin=ckan db init; do 
+  echo Retrying in 5 seconds...
+  sleep 5
+done
+
 ckan_wrapper --plugin=ckanext-harvest harvester initdb
 
 # start_ckan_development.sh &
-pytest -s --ckan-ini=$TEST_CONFIG --cov=ckanext.datagovcatalog --disable-warnings /app/ckanext/datagovcatalog/tests/
+pytest --ckan-ini=$TEST_CONFIG --cov=ckanext.datagovcatalog --disable-warnings /app/ckanext/datagovcatalog/tests/
