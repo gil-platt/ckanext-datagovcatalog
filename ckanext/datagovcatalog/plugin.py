@@ -26,7 +26,7 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
     def get_actions(self):
         return {
             'harvest_get_notifications_recipients': harvest_get_notifications_recipients
-            }
+        }
 
     # ITemplateHelpers
 
@@ -34,14 +34,13 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
         from ckanext.datagovcatalog.helpers import sitemap
 
         return {
-                'get_sitemap_url': sitemap.get_sitemap_url,
-                }
+            'get_sitemap_url': sitemap.get_sitemap_url,
+        }
 
-    # # IPackageController
+    # IPackageController
 
     def before_view(self, pkg_dict):
 
-        print(pkg_dict)
         # Add tracking information just for datasets
         if pkg_dict.get('type', 'dataset') == 'dataset':
             if toolkit.asbool(config.get('ckanext.datagovcatalog.add_packages_tracking_info', True)):
@@ -58,5 +57,4 @@ class DatagovcatalogPlugin(plugins.SingletonPlugin):
 
                 pkg_dict = update_tracking_info_to_package(pkg_dict, new_pkg_dict)
 
-            print(pkg_dict)
         return pkg_dict
