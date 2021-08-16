@@ -2,24 +2,26 @@
 
 """Tests for notifications.py."""
 
+from builtins import object
 from ckan import model
-from ckan import plugins as p
 from ckan.plugins import toolkit
-from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
-from ckantoolkit.tests import factories as ckan_factories
-from ckantoolkit.tests.helpers import reset_db
-from nose.tools import assert_in
+import ckan.tests.factories as factories
+from ckan.tests.helpers import reset_db
+
+import os
+import six
 
 
 class TestExtraNotificationRecipients(object):
 
     @classmethod
-    def setup_class(cls):
+    def setup(self):
         reset_db()
-
-    @classmethod
-    def teardown_class(cls):
-        reset_db()
+        ini_path = os.path.dirname(os.path.abspath(__file__)) + "../../../../test.ini"
+        if six.PY2:
+            os.system("paster --plugin=ckanext-harvest harvester initdb  -c %s" % ini_path)
+        else:
+            os.system("ckan -c " + ini_path + " harvester initdb")
 
     def test_get_extra_email_notification(self):
         context, source_id = self._create_harvest_source_with_owner_org_and_job_if_not_existing()
@@ -27,8 +29,8 @@ class TestExtraNotificationRecipients(object):
         new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
         new_recipients = new_rec_action(context, {'source_id': source_id})
 
-        assert_in({'email': u'john@gmail.com', 'name': u'john@gmail.com'}, new_recipients)
-        assert_in({'email': u'peter@gmail.com', 'name': u'peter@gmail.com'}, new_recipients)
+        assert {'email': u'john@gmail.com', 'name': u'john@gmail.com'} in new_recipients
+        assert {'email': u'peter@gmail.com', 'name': u'peter@gmail.com'} in new_recipients
 
     def _create_harvest_source_with_owner_org_and_job_if_not_existing(self):
         site_user = toolkit.get_action('get_site_user')(
@@ -41,11 +43,11 @@ class TestExtraNotificationRecipients(object):
             'ignore_auth': True,
         }
 
-        test_org = ckan_factories.Organization(extras=[{'key': 'email_list', 'value': 'john@gmail.com, peter@gmail.com'}])
-        test_other_org = ckan_factories.Organization()
-        org_admin_user = ckan_factories.User()
-        org_member_user = ckan_factories.User()
-        
+        test_org = factories.Organization(extras=[{'key': 'email_list', 'value': 'john@gmail.com, peter@gmail.com'}])
+        # test_other_org = factories.Organization()
+        org_admin_user = factories.User()
+        org_member_user = factories.User()
+
         toolkit.get_action('organization_member_create')(
             context.copy(),
             {
@@ -74,10 +76,10 @@ class TestExtraNotificationRecipients(object):
         }
 
         harvest_source = toolkit.get_action('harvest_source_create')(
-                context.copy(),
-                source_dict
-            )
-        
+            context.copy(),
+            source_dict
+        )
+
         return context, harvest_source['id']
 
     def test_create_harvest_source_with_no_org(self):
@@ -86,7 +88,7 @@ class TestExtraNotificationRecipients(object):
         new_rec_action = toolkit.get_action("harvest_get_notifications_recipients")
         new_recipients = new_rec_action(context, {'source_id': source_id})
 
-        assert_in({'name': u'test.ckan.net', 'email': None}, new_recipients)
+        assert {'name': u'test.ckan.net', 'email': None} in new_recipients
 
     def _create_harvest_source_with_no_org(self):
         site_user = toolkit.get_action('get_site_user')(
@@ -108,10 +110,8 @@ class TestExtraNotificationRecipients(object):
         }
 
         harvest_source = toolkit.get_action('harvest_source_create')(
-                context.copy(),
-                source_dict
-            )
-        
-        return context, harvest_source['id']
+            context.copy(),
+            source_dict
+        )
 
-    
+        return context, harvest_source['id']

@@ -2,11 +2,12 @@
 
 '''Tests for the ckanext.datagovcatalog extension.'''
 
-from nose.tools import assert_true
+from builtins import object
 import ckan.plugins
+
 
 class TestDatagovCatalogPluginLoaded(object):
     '''Tests for the ckanext.datagovcatalog.plugin module.'''
 
     def test_plugin_loaded(self):
-        assert_true(ckan.plugins.plugin_loaded('datagovcatalog'))
+        assert ckan.plugins.plugin_loaded('datagovcatalog')

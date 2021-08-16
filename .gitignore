@@ -2,6 +2,7 @@
 node_modules
 bower_components
 .vscode/
+*.swp
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -19,6 +20,7 @@ sdist/
 *.egg-info/
 .installed.cfg
 *.egg
+*.bak
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -1,63 +1,91 @@
 # encoding: utf-8
 
 """Tests for tracking information."""
+from builtins import range
+from builtins import object
 from datetime import datetime, timedelta
 from ckan import model
 from ckan import plugins as p
 from ckan.lib.helpers import url_for
-from ckan.lib.cli import Tracking, SearchIndexCommand
-from ckanext.datagovcatalog.harvester.notifications import harvest_get_notifications_recipients
-from ckantoolkit.tests import factories as ckan_factories
-from ckantoolkit.tests.helpers import reset_db, FunctionalTestBase
-from nose.tools import assert_in
+
+try:
+    p.toolkit.requires_ckan_version("2.9")
+except p.toolkit.CkanVersionException:
+    from ckan.lib.cli import Tracking, SearchIndexCommand
+else:
+    from click.testing import CliRunner
+    from ckan.cli import tracking, search_index
+
+import ckan.tests.factories as factories
 from ckan.tests import helpers
 
+import pytest
+import six
 
-class TestPackageList(FunctionalTestBase):
+
+# @pytest.fixture
+@pytest.mark.ckan_config('ckanext.datagovcatalog.add_packages_tracking_info', True)
+@pytest.mark.usefixtures('with_request_context')
+class TestPackageList(helpers.FunctionalTestBase):
 
     @classmethod
-    def setup_class(cls):
-        super(TestPackageList, cls).setup_class()
-        reset_db()
-    
+    def setup(self):
+        if six.PY3:
+            runner = CliRunner()
+            runner.invoke(search_index.clear)
+
     @helpers.change_config('ckanext.datagovcatalog.add_packages_tracking_info', 'true')
     def test_tracking_info(self):
-        
+
+        self.app = self._get_test_app()
         # Create packages and navigate them
         self._create_packages_and_tracking()
         # update tracking info
         self._update_tracking_info()
-        
+
         # ensure we can see tracking info
-        app = self._get_test_app()
-        res = app.get('/dataset')
-        assert_in(self.package['name'], res.unicode_body)
-        assert_in('recent views', res.unicode_body)
+        res = self.app.get('/dataset')
+        if six.PY2:
+            assert self.package['name'] in res.unicode_body
+            assert '12 recent views' in res.unicode_body
+        else:
+            assert self.package['name'] in res.body
+            assert '12 recent views' in res.body
 
     def _create_packages_and_tracking(self):
 
-        self.package = ckan_factories.Dataset()
+        self.package = factories.Dataset()
+        self.sysadmin = factories.Sysadmin(name='admin')
         # add 12 visit to the dataset page
-        url = url_for(controller='package', action='read',id=self.package['name'])
-        app = self._get_test_app()
+        if six.PY2:
+            url = url_for(controller='package', action='read', id=self.package['name'])
+        else:
+            url = url_for(controller='dataset', action='read', id=self.package['name'])
         for r in range(12):
-            self._post_to_tracking(url=url, app=app, ip='199.200.100.{}'.format(r))
-        
-    def _update_tracking_info(self):
-        # update tracking info
-        date = (datetime.now() -timedelta(days=1)).strftime('%Y-%m-%d')
-        Tracking('Tracking').update_all(engine=model.meta.engine, start_date=date)
+            self._post_to_tracking(url=url, app=self.app, ip='199.200.100.{}'.format(r))
 
-        #rebuild search index
-        class FakeOptions():
-            def __init__(self,**kwargs):
-                for key in kwargs:
-                    setattr(self,key,kwargs[key])
-        sic = SearchIndexCommand('search-index')
-        sic.args = []
-        sic.options = FakeOptions(only_missing=False, force=False, refresh=False, commit_each=False, quiet=False)
-        sic.rebuild()
-        
+    def _update_tracking_info(self):
+        date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        if six.PY2:
+            # update tracking info
+            Tracking('Tracking').update_all(engine=model.meta.engine, start_date=date)
+
+            # rebuild search index
+            class FakeOptions(object):
+                def __init__(self, **kwargs):
+                    for key in kwargs:
+                        setattr(self, key, kwargs[key])
+            sic = SearchIndexCommand('search-index')
+            sic.args = []
+            sic.options = FakeOptions(only_missing=False, force=False, refresh=False, commit_each=False, quiet=False)
+            sic.rebuild()
+        else:
+            runner = CliRunner()
+            runner.invoke(tracking.update, date)
+            runner.invoke(search_index.rebuild, ['--only_missing', 'False', '--force', 'False',
+                                                 '--refresh', 'False', 'commit_each', 'False',
+                                                 '--quiet', 'False'])
+
     def _post_to_tracking(self, app, url, type_='page', ip='199.204.138.90',
                           browser='firefox'):
         '''Post some data to /_tracking directly.
