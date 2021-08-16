@@ -1,6 +1,5 @@
 CKAN_VERSION ?= 2.8
 COMPOSE_FILE ?= docker-compose.yml
-COMPOSE_2_8_FILE ?= docker-compose.2.8.yml
 
 build: ## Build the docker containers
 	CKAN_VERSION=$(CKAN_VERSION) docker-compose -f $(COMPOSE_FILE) build
