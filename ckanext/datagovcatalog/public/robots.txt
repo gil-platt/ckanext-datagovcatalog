@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /dataset/rate/
+Disallow: /revision/
+Disallow: /dataset/*/history
+Disallow: /api/
+Crawl-Delay: 10
+Sitemap: https://test2.gov/test2/sitemapsitemap.xml
