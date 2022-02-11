@@ -6,6 +6,7 @@ RUN pip3 install --upgrade pip
 
 COPY . /srv/app
 WORKDIR /srv/app
+RUN chmod 775 -R /srv/app
 
 # python cryptography takes a while to build
 RUN if [[ "${CKAN_VERSION}" = "2.8" ]] ; then \
