@@ -20,6 +20,6 @@ def create_sitemap_url():
                  "Sitemap: %s"
                  % get_sitemap_url())
 
-    path = os.path.dirname(os.path.abspath(__file__)) + '/../public/robots.txt'
+    path = '/srv/app/ckanext-datagovcatalog/ckanext/datagovcatalog/public/robots.txt'
     with open(path, "w+") as robot_file:
         robot_file.write(robot_txt)
