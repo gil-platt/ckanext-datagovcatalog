@@ -1,9 +1,10 @@
 from future import standard_library
+
 standard_library.install_aliases()
 
 import os
-
 from urllib.parse import urljoin
+
 from ckan.lib.base import config
 
 
@@ -20,6 +21,6 @@ def create_sitemap_url():
                  "Sitemap: %s"
                  % get_sitemap_url())
 
-    path = '/srv/app/ckanext-datagovcatalog/ckanext/datagovcatalog/public/robots.txt'
+    path = '/srv/app/src/ckanext-datagovcatalog/ckanext/datagovcatalog/publicrobots.txt'
     with open(path, "w+") as robot_file:
         robot_file.write(robot_txt)
